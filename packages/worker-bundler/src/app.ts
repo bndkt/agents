@@ -7,14 +7,16 @@
  * and only forwards non-asset requests to the isolate.
  */
 
-import { bundleWithEsbuild } from "./bundler";
+import { bundleWithRolldown } from "./bundler";
 import { hasNodejsCompat, parseWranglerConfig } from "./config";
 import { hasDependencies, installDependencies } from "./installer";
 import { transformAndResolve } from "./transformer";
 import type { AssetConfig, AssetManifest } from "./asset-handler";
 import { buildAssetManifest } from "./asset-handler";
 import type { CreateWorkerResult, Files } from "./types";
-import type { Plugin, BuildOptions } from "esbuild-wasm";
+import type { InputOptions, Plugin } from "@rolldown/browser";
+
+type TransformOptions = NonNullable<InputOptions["transform"]>;
 import {
   InMemoryFileSystem,
   isFileSystem,
@@ -92,19 +94,19 @@ export interface CreateAppOptions {
    */
   registry?: string;
   /**
-   * Additional esbuild plugins to use while bundling server and client entries.
+   * Additional rolldown plugins to use while bundling server and client entries.
    */
   plugins?: Plugin[];
   /**
-   * JSX transform mode to pass to esbuild.
+   * JSX transform mode to pass to rolldown.
    */
-  jsx?: BuildOptions["jsx"];
+  jsx?: TransformOptions["jsx"];
   /**
-   * JSX import source to pass to esbuild.
+   * JSX import source to pass to rolldown.
    */
   jsxImportSource?: string;
   /**
-   * Define replacements to pass to esbuild.
+   * Define replacements to pass to rolldown.
    */
   define?: Record<string, string>;
 }
@@ -204,7 +206,7 @@ export async function createApp(
       );
     }
 
-    const clientResult = await bundleWithEsbuild(
+    const clientResult = await bundleWithRolldown(
       fileSystem,
       clientEntry,
       externals,
@@ -263,7 +265,7 @@ export async function createApp(
 
   let serverResult: CreateWorkerResult;
   if (bundle) {
-    serverResult = await bundleWithEsbuild(
+    serverResult = await bundleWithRolldown(
       fileSystem,
       serverEntry,
       externals,

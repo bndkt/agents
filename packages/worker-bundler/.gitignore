@@ -1,2 +1,5 @@
-# Copied by test setup (global-setup.ts), cleaned up after tests
-src/esbuild.wasm
+# Staged TypeScript bundle for tests; cleaned up after tests
+src/vendor/typescript.browser.js
+
+# Staged rolldown WASM; cleaned up after tests
+src/vendor/rolldown.wasm

@@ -4,7 +4,7 @@
  * Creates worker bundles from source files for Cloudflare's Worker Loader binding.
  */
 
-import { bundleWithEsbuild } from "./bundler";
+import { bundleWithRolldown } from "./bundler";
 import { hasNodejsCompat, parseWranglerConfig } from "./config";
 import { hasDependencies, installDependencies } from "./installer";
 import { transformAndResolve } from "./transformer";
@@ -133,8 +133,8 @@ export async function createWorker(
   }
 
   if (bundle) {
-    // Try bundling with esbuild-wasm
-    const result = await bundleWithEsbuild(
+    // Bundle with @rolldown/browser
+    const result = await bundleWithRolldown(
       fileSystem,
       entryPoint,
       externals,

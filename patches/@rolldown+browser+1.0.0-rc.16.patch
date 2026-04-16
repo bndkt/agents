@@ -1,0 +1,15 @@
+diff --git a/node_modules/@rolldown/browser/dist/rolldown-binding.wasi-browser.js b/node_modules/@rolldown/browser/dist/rolldown-binding.wasi-browser.js
+index 5383ab1..60d5e7e 100644
+--- a/node_modules/@rolldown/browser/dist/rolldown-binding.wasi-browser.js
++++ b/node_modules/@rolldown/browser/dist/rolldown-binding.wasi-browser.js
+@@ -27,7 +27,9 @@ const __sharedMemory = new WebAssembly.Memory({
+   shared: true,
+ })
+ 
+-const __wasmFile = await fetch(__wasmUrl).then((res) => res.arrayBuffer())
++const __wasmFile = (typeof globalThis !== 'undefined' && globalThis.__ROLLDOWN_WASM__)
++  ? globalThis.__ROLLDOWN_WASM__
++  : await fetch(__wasmUrl).then((res) => res.arrayBuffer())
+ 
+ const {
+   instance: __napiInstance,

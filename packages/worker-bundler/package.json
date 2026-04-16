@@ -33,9 +33,9 @@
     "test": "vitest run --config src/tests/vitest.config.ts"
   },
   "dependencies": {
+    "@rolldown/browser": "^1.0.0-rc.16",
     "@typescript/vfs": "^1.6.4",
     "es-module-lexer": "^2.0.0",
-    "esbuild-wasm": "0.28.0",
     "resolve.exports": "^2.0.3",
     "semver": "^7.7.4",
     "smol-toml": "^1.6.1",

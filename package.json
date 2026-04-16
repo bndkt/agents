@@ -97,5 +97,8 @@
       "oxfmt --write"
     ]
   },
-  "packageManager": "npm@11.12.1"
+  "packageManager": "npm@11.12.1",
+  "dependencies": {
+    "@rolldown/browser": "^1.0.0-rc.16"
+  }
 }

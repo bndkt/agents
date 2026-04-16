@@ -1,5 +1,7 @@
-import type { Plugin, BuildOptions } from "esbuild-wasm";
+import type { InputOptions, Plugin } from "@rolldown/browser";
 import type { FileSystem } from "./file-system";
+
+type TransformOptions = NonNullable<InputOptions["transform"]>;
 
 /**
  * Input files for the bundler
@@ -77,19 +79,19 @@ export interface CreateWorkerOptions {
    */
   registry?: string;
   /**
-   * Additional esbuild plugins to use while bundling.
+   * Additional rolldown plugins to use while bundling.
    */
   plugins?: Plugin[];
   /**
-   * JSX transform mode to pass to esbuild.
+   * JSX transform mode to pass to rolldown.
    */
-  jsx?: BuildOptions["jsx"];
+  jsx?: TransformOptions["jsx"];
   /**
-   * JSX import source to pass to esbuild.
+   * JSX import source to pass to rolldown.
    */
   jsxImportSource?: string;
   /**
-   * Define replacements to pass to esbuild.
+   * Define replacements to pass to rolldown.
    */
   define?: Record<string, string>;
 }

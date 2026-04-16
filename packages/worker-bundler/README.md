@@ -541,7 +541,7 @@ const fs = new DurableObjectRawFileSystem(this.ctx.storage);
 
 ### Snapshotting from async sources
 
-The `FileSystem` interface is synchronous because esbuild and TypeScript require synchronous file access. To bridge from an async storage backend (like `Workspace` from `@cloudflare/shell`), use `createFileSystemSnapshot`:
+The `FileSystem` interface is synchronous because the internal resolver and TypeScript require synchronous file access. To bridge from an async storage backend (like `Workspace` from `@cloudflare/shell`), use `createFileSystemSnapshot`:
 
 ```ts
 import { createFileSystemSnapshot } from "@cloudflare/worker-bundler";

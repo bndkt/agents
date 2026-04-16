@@ -1,18 +1,24 @@
-import { copyFileSync, existsSync } from "node:fs";
+import { copyFileSync, mkdirSync } from "node:fs";
 import { execSync } from "node:child_process";
-import { join, dirname } from "node:path";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { build } from "tsdown";
 import {
   bundleTypeScriptForWorkers,
   removeBundledTypeScript
 } from "./typescript-browser-bundle";
+import {
+  getRolldownWasmStagePath,
+  removeStagedRolldownWasm,
+  stageRolldownWasm
+} from "./rolldown-wasm-stage";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const packageRoot = join(__dirname, "..");
 
 async function main() {
   await bundleTypeScriptForWorkers(packageRoot);
+  stageRolldownWasm(packageRoot);
 
   try {
     await build({
@@ -21,7 +27,7 @@ async function main() {
       entry: ["src/index.ts", "src/typescript.ts"],
       deps: {
         skipNodeModulesBundle: true,
-        neverBundle: ["cloudflare:workers", "./esbuild.wasm"]
+        neverBundle: ["cloudflare:workers", "./vendor/rolldown.wasm"]
       },
       format: "esm",
       sourcemap: true,
@@ -29,32 +35,18 @@ async function main() {
       platform: "browser"
     });
 
-    // Copy esbuild.wasm from esbuild-wasm package into dist/
-    const possiblePaths = [
-      join(packageRoot, "node_modules/esbuild-wasm/esbuild.wasm"),
-      join(packageRoot, "../../node_modules/esbuild-wasm/esbuild.wasm")
-    ];
-
-    let wasmSource: string | null = null;
-    for (const p of possiblePaths) {
-      if (existsSync(p)) {
-        wasmSource = p;
-        break;
-      }
-    }
-
-    if (!wasmSource) {
-      throw new Error("Could not find esbuild.wasm!");
-    }
-
-    const wasmDest = join(packageRoot, "dist/esbuild.wasm");
-    copyFileSync(wasmSource, wasmDest);
-    console.log("Copied esbuild.wasm to dist/");
+    // Copy the staged rolldown WASM into dist/ so the emitted
+    // `./vendor/rolldown.wasm` import resolves in consumers.
+    const stagedWasm = getRolldownWasmStagePath(packageRoot);
+    const distWasm = join(packageRoot, "dist/vendor/rolldown.wasm");
+    mkdirSync(dirname(distWasm), { recursive: true });
+    copyFileSync(stagedWasm, distWasm);
 
     // then run oxfmt on the generated .d.ts files
     execSync("oxfmt --write ./dist/*.d.ts");
   } finally {
     removeBundledTypeScript(packageRoot);
+    removeStagedRolldownWasm(packageRoot);
   }
 }
 

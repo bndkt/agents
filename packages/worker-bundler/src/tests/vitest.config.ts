@@ -13,7 +13,7 @@ export default defineConfig({
   test: {
     name: "workers",
     include: [path.join(testsDir, "**/*.test.ts")],
-    // Copies esbuild.wasm into src/ before tests, removes after
+    // Stages the bundled TypeScript compiler into src/ before tests, removes after
     globalSetup: [path.join(testsDir, "global-setup.ts")]
   }
 });

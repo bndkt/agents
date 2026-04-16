@@ -14,6 +14,7 @@ import { transformAndResolve } from "./transformer";
 import type { AssetConfig, AssetManifest } from "./asset-handler";
 import { buildAssetManifest } from "./asset-handler";
 import type { CreateWorkerResult, Files } from "./types";
+import type { Plugin, BuildOptions } from "esbuild-wasm";
 import {
   InMemoryFileSystem,
   isFileSystem,
@@ -90,6 +91,22 @@ export interface CreateAppOptions {
    * npm registry URL for fetching packages.
    */
   registry?: string;
+  /**
+   * Additional esbuild plugins to use while bundling server and client entries.
+   */
+  plugins?: Plugin[];
+  /**
+   * JSX transform mode to pass to esbuild.
+   */
+  jsx?: BuildOptions["jsx"];
+  /**
+   * JSX import source to pass to esbuild.
+   */
+  jsxImportSource?: string;
+  /**
+   * Define replacements to pass to esbuild.
+   */
+  define?: Record<string, string>;
 }
 
 /**
@@ -142,7 +159,11 @@ export async function createApp(
     target = "es2022",
     minify = false,
     sourcemap = false,
-    registry
+    registry,
+    plugins = [],
+    jsx,
+    jsxImportSource,
+    define
   } = options;
 
   const fileSystem: FileSystem = isFileSystem(files)
@@ -190,7 +211,11 @@ export async function createApp(
       "es2022",
       minify,
       sourcemap,
-      false
+      false,
+      plugins,
+      jsx,
+      jsxImportSource,
+      define
     );
 
     const bundleModule = clientResult.modules["bundle.js"];
@@ -245,7 +270,11 @@ export async function createApp(
       target,
       minify,
       sourcemap,
-      nodejsCompat
+      nodejsCompat,
+      plugins,
+      jsx,
+      jsxImportSource,
+      define
     );
   } else {
     serverResult = await transformAndResolve(

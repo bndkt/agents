@@ -87,7 +87,11 @@ export async function createWorker(
     target = "es2022",
     minify = false,
     sourcemap = false,
-    registry
+    registry,
+    plugins = [],
+    jsx,
+    jsxImportSource,
+    define
   } = options;
 
   let fileSystem: FileSystem;
@@ -137,7 +141,11 @@ export async function createWorker(
       target,
       minify,
       sourcemap,
-      nodejsCompat
+      nodejsCompat,
+      plugins,
+      jsx,
+      jsxImportSource,
+      define
     );
 
     // Add wrangler config if a config file was found

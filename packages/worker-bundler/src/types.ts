@@ -1,3 +1,4 @@
+import type { Plugin, BuildOptions } from "esbuild-wasm";
 import type { FileSystem } from "./file-system";
 
 /**
@@ -75,6 +76,22 @@ export interface CreateWorkerOptions {
    * @default 'https://registry.npmjs.org'
    */
   registry?: string;
+  /**
+   * Additional esbuild plugins to use while bundling.
+   */
+  plugins?: Plugin[];
+  /**
+   * JSX transform mode to pass to esbuild.
+   */
+  jsx?: BuildOptions["jsx"];
+  /**
+   * JSX import source to pass to esbuild.
+   */
+  jsxImportSource?: string;
+  /**
+   * Define replacements to pass to esbuild.
+   */
+  define?: Record<string, string>;
 }
 
 /**

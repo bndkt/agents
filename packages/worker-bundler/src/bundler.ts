@@ -22,7 +22,11 @@ export async function bundleWithEsbuild(
   target: string,
   minify: boolean,
   sourcemap: boolean,
-  nodejsCompat: boolean
+  nodejsCompat: boolean,
+  plugins: esbuild.Plugin[] = [],
+  jsx?: esbuild.BuildOptions["jsx"],
+  jsxImportSource?: string,
+  define?: Record<string, string>
 ): Promise<CreateWorkerResult> {
   // Ensure esbuild is initialized (happens lazily on first use)
   await initializeEsbuild();
@@ -111,8 +115,11 @@ export async function bundleWithEsbuild(
     platform: nodejsCompat ? "node" : "browser",
     target,
     minify,
+    jsx,
+    jsxImportSource,
+    define,
     sourcemap: sourcemap ? "inline" : false,
-    plugins: [virtualFsPlugin],
+    plugins: [...plugins, virtualFsPlugin],
     outfile: "bundle.js"
   });
 
